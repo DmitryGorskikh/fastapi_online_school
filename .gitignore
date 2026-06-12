@@ -1,0 +1,30 @@
+cat > .gitignore << 'EOF'
+# Окружение и секреты
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+*.egg-info/
+
+# Базы данных
+*.db
+*.sqlite
+*.sqlite3
+
+# Тесты и кэши
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+EOF
