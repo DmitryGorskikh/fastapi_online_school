@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import APIRouter, Depends, status
 
 from app.application.use_cases.auth.refresh_token import (
@@ -28,6 +30,7 @@ from app.presentation.api.schemas import (
 from app.presentation.api.schemas.auth import RefreshTokenRequest
 
 router = APIRouter(prefix='/auth', tags=['Auth'])
+logger = logging.getLogger('app.events')
 
 
 @router.post(
@@ -54,6 +57,10 @@ async def register_user(
             email=request.email,
             password=request.password,
         )
+    )
+    logger.info(
+        'User registered',
+        extra={'event': 'user_registered', 'email': request.email},
     )
     return RegisteredUserResponse.model_validate(result)
 
@@ -82,6 +89,10 @@ async def login_user(
             email=request.email,
             password=request.password,
         )
+    )
+    logger.info(
+        'User logged in',
+        extra={'event': 'user_login', 'email': request.email},
     )
     return TokenResponse(
         access_token=result.access_token,

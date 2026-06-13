@@ -1,3 +1,5 @@
+import logging
+
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, status
@@ -98,6 +100,8 @@ router = APIRouter(
     },
 )
 
+logger = logging.getLogger('app.events')
+
 
 @router.post(
     "/courses",
@@ -183,8 +187,12 @@ async def remove_course(
     course_id: UUID,
     use_case: DeleteCourseUseCase = Depends(get_remove_course_use_case),
 ):
-    return await use_case.execute(
+    await use_case.execute(
         DeleteCourseCommand(course_id=course_id)
+    )
+    logger.info(
+        'Course deleted',
+        extra={'event': 'course_deleted', 'course_id': str(course_id)},
     )
 
 
@@ -281,8 +289,12 @@ async def remove_module(
     module_id: UUID,
     use_case: DeleteModuleUseCase = Depends(get_remove_module_use_case),
 ):
-    return await use_case.execute(
+    await use_case.execute(
         DeleteModuleCommand(module_id=module_id)
+    )
+    logger.info(
+        'Module deleted',
+        extra={'event': 'module_deleted', 'module_id': str(module_id)},
     )
 
 
@@ -379,8 +391,12 @@ async def remove_section(
     section_id: UUID,
     use_case: DeleteSectionUseCase = Depends(get_remove_section_use_case),
 ):
-    return await use_case.execute(
+    await use_case.execute(
         DeleteSectionCommand(section_id=section_id)
+    )
+    logger.info(
+        'Section deleted',
+        extra={'event': 'section_deleted', 'section_id': str(section_id)},
     )
 
 
@@ -477,6 +493,10 @@ async def remove_lecture(
     lecture_id: UUID,
     use_case: DeleteLectureUseCase = Depends(get_remove_lecture_use_case),
 ):
-    return await use_case.execute(
+    await use_case.execute(
         DeleteLectureCommand(lecture_id=lecture_id)
+    )
+    logger.info(
+        'Lecture deleted',
+        extra={'event': 'lecture_deleted', 'lecture_id': str(lecture_id)},
     )

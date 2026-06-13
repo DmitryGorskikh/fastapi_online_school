@@ -1,3 +1,4 @@
+# from fastapi import responses
 import pytest
 
 
@@ -7,7 +8,7 @@ async def test_register_creates_student_user(client):
         '/api/auth/register',
         json={
             'email': 'student@example.com',
-            'password': 'strongpassword123',
+            'password': 'Strongpassword123',
         },
     )
 
@@ -23,7 +24,7 @@ async def test_register_returns_400_when_user_already_exists(client):
         '/api/auth/register',
         json={
             'email': 'student@example.com',
-            'password': 'strongpassword123',
+            'password': 'Strongpassword123',
         },
     )
 
@@ -31,13 +32,25 @@ async def test_register_returns_400_when_user_already_exists(client):
         '/api/auth/register',
         json={
             'email': 'student@example.com',
-            'password': 'anotherpassword123',
+            'password': 'Anotherpassword123',
         },
     )
 
     assert response.status_code == 400
     payload = response.json()
     assert payload['error'] == 'application_error'
+
+
+@pytest.mark.asyncio
+async def test_register_returns_422_wtth_incorrected_password(client):
+    response = await client.post(
+        '/api/auth/register',
+        json={
+            'email': 'student@example.com',
+            'password': 'litepassword',
+        },
+    )
+    assert response.status_code == 422
 
 
 @pytest.mark.asyncio

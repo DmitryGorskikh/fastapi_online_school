@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
 from app.domain.entities.user import UserRole
 
@@ -8,6 +8,17 @@ from app.domain.entities.user import UserRole
 class RegisterUserRequest(BaseModel):
     email: EmailStr
     password: str = Field(min_length=8, max_length=128)
+
+    @field_validator('password')
+    @classmethod
+    def validate_password(cls, value: str) -> str:
+        if not any(c.isupper() for c in value):
+            raise ValueError(
+                'Password must contain at least one uppercase letter.'
+            )
+        if not any(c.isdigit() for c in value):
+            raise ValueError('Password must contain at least one digit.')
+        return value
 
 
 class RegisteredUserResponse(BaseModel):
