@@ -1,7 +1,10 @@
 from dataclasses import dataclass, field
 from uuid import UUID
 
-from app.domain.exceptions import InvalidSectionError
+from app.domain.exceptions import (
+    InvalidSectionError, SectionQuestionAlreadyAttachedError,
+    SectionQuestionNotAttachedError
+)
 
 
 @dataclass(slots=True)
@@ -12,6 +15,7 @@ class Section:
     description: str = ""
     position: int = 1
     lecture_ids: list[UUID] = field(default_factory=list)
+    question_ids: list[UUID] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         self._validate()
@@ -35,3 +39,23 @@ class Section:
     def remove_lecture(self, lecture_id: UUID) -> None:
         if lecture_id in self.lecture_ids:
             self.lecture_ids.remove(lecture_id)
+
+    def add_question(self, question_id: UUID) -> None:
+        if question_id in self.question_ids:
+            raise SectionQuestionAlreadyAttachedError(
+                'Section already has this question attached.'
+            )
+        self.question_ids.append(question_id)
+
+    def remove_question(self, question_id: UUID) -> None:
+        if question_id not in self.question_ids:
+            raise SectionQuestionNotAttachedError(
+                'Section does not have this question attached.'
+            )
+        self.question_ids.remove(question_id)
+
+    def has_questions(self) -> bool:
+        return bool(self.question_ids)
+
+    def contains_question(self, question_id: UUID) -> bool:
+        return question_id in self.question_ids

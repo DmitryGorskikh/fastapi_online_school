@@ -7,6 +7,7 @@ from app.domain.exceptions import InvalidCourseError
 @dataclass(slots=True)
 class Course:
     id: UUID
+    author_id: UUID
     title: str
     description: str
     module_ids: list[UUID] = field(default_factory=list)
@@ -24,6 +25,9 @@ class Course:
         self.title = title
         self.description = description
         self._validate()
+
+    def is_owned_by(self, user_id: UUID) -> bool:
+        return self.author_id == user_id
 
     def add_module(self, module_id: UUID) -> None:
         if module_id not in self.module_ids:

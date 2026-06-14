@@ -5,16 +5,20 @@ from app.application.exceptions import (
     CourseNotFoundError
 )
 from app.application.interfaces.unit_of_work import UnitOfWork
+from app.application.services.course_access_service import CourseAccessService
+from app.domain.entities import User
 
 
 @dataclass(slots=True)
 class DeleteCourseCommand:
+    author: User
     course_id: UUID
 
 
 class DeleteCourseUseCase:
     def __init__(self, uow: UnitOfWork) -> None:
         self.uow = uow
+        self.course_access_service = CourseAccessService(uow)
 
     async def execute(
         self, command: DeleteCourseCommand
@@ -23,6 +27,11 @@ class DeleteCourseUseCase:
             course = await self.uow.courses.get_by_id(command.course_id)
             if course is None:
                 raise CourseNotFoundError("Course not found.")
+
+            await self.course_access_service.ensure_can_manage_course(
+                author=command.author,
+                course_id=course.id,
+            )
 
             modules = await self.uow.modules.get_by_ids(course.module_ids)
             for module in modules:

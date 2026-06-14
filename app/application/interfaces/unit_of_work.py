@@ -4,7 +4,10 @@ from app.application.interfaces.repositories import (
     CourseRepository,
     LectureRepository,
     ModuleRepository,
+    QuestionRepository,
     SectionRepository,
+    AnswerOptionRepository,
+    QuestionAttemptRepository,
     UserRepository,
 )
 
@@ -14,6 +17,9 @@ class UnitOfWork(ABC):
     modules: ModuleRepository
     sections: SectionRepository
     lectures: LectureRepository
+    questions: QuestionRepository
+    answer_options: AnswerOptionRepository
+    question_attempts: QuestionAttemptRepository
     users: UserRepository
 
     @abstractmethod
