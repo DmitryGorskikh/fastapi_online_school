@@ -24,5 +24,5 @@ class AnswerOptionRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def remove(self, answer_option_id: UUID) -> None:
+    async def remove(self, answer_option: AnswerOption) -> None:
         raise NotImplementedError

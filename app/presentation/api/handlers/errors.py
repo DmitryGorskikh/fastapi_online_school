@@ -9,11 +9,16 @@ from app.application.exceptions import (
     LectureNotFoundError,
     ModuleNotFoundError,
     SectionNotFoundError,
+    QuestionNotFoundError,
+    AnswerOptionNotFoundError,
+    QuestionAttemptNotFoundError,
+    PermissionDeniedError as ApplicationPermissionDeniedError,
 )
 from app.domain.exceptions import DomainError
 from app.presentation.api.schemas import ErrorResponse
 from app.presentation.exceptions import (
-    AuthenticationError, PermissionDeniedError
+    AuthenticationError,
+    PermissionDeniedError as PresentationPermissionDeniedError,
 )
 
 logger = logging.getLogger('app.errors')
@@ -141,6 +146,65 @@ async def permission_denied_handler(
     )
 
 
+async def application_permission_denied_handler(
+    request: Request,
+    exc: Exception,
+) -> JSONResponse:
+    return build_error_response(
+        request=request,
+        error="permission_denied",
+        message=str(exc),
+        status_code=status.HTTP_403_FORBIDDEN,
+    )
+
+
+async def presentation_permission_denied_handler(
+    request: Request,
+    exc: Exception,
+) -> JSONResponse:
+    return build_error_response(
+        request=request,
+        error="permission_denied",
+        message=str(exc),
+        status_code=status.HTTP_403_FORBIDDEN,
+    )
+
+
+async def question_not_found_handler(
+    request: Request, exc: Exception
+) -> JSONResponse:
+    return build_error_response(
+        request=request,
+        error="question_not_found",
+        message=str(exc),
+        status_code=status.HTTP_404_NOT_FOUND,
+    )
+
+
+async def answer_option_not_found_handler(
+    request: Request,
+    exc: Exception,
+) -> JSONResponse:
+    return build_error_response(
+        request=request,
+        error="answer_option_not_found",
+        message=str(exc),
+        status_code=status.HTTP_404_NOT_FOUND,
+    )
+
+
+async def question_attempt_not_found_handler(
+    request: Request,
+    exc: Exception,
+) -> JSONResponse:
+    return build_error_response(
+        request=request,
+        error="question_attempt_not_found",
+        message=str(exc),
+        status_code=status.HTTP_404_NOT_FOUND,
+    )
+
+
 def register_exception_handlers(app: FastAPI) -> None:
     app.add_exception_handler(DomainError, domain_error_handler)
 
@@ -148,7 +212,12 @@ def register_exception_handlers(app: FastAPI) -> None:
         AuthenticationError, authentication_error_handler
     )
     app.add_exception_handler(
-        PermissionDeniedError, permission_denied_handler
+        ApplicationPermissionDeniedError,
+        application_permission_denied_handler,
+    )
+    app.add_exception_handler(
+        PresentationPermissionDeniedError,
+        presentation_permission_denied_handler,
     )
 
     app.add_exception_handler(ApplicationError, application_error_handler)
@@ -156,4 +225,13 @@ def register_exception_handlers(app: FastAPI) -> None:
     app.add_exception_handler(ModuleNotFoundError, module_not_found_handler)
     app.add_exception_handler(SectionNotFoundError, section_not_found_handler)
     app.add_exception_handler(LectureNotFoundError, lecture_not_found_handler)
+    app.add_exception_handler(
+        QuestionNotFoundError, question_not_found_handler
+    )
+    app.add_exception_handler(
+        AnswerOptionNotFoundError, answer_option_not_found_handler
+    )
+    app.add_exception_handler(
+        QuestionAttemptNotFoundError, question_attempt_not_found_handler
+    )
     app.add_exception_handler(Exception, unhandled_exception_handler)

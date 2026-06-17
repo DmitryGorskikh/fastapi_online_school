@@ -10,7 +10,7 @@ from app.domain.entities.module import Module
 
 @dataclass(slots=True)
 class UpdateModuleCommand:
-    author: User
+    actor: User
     module_id: UUID
     title: str
     description: str
@@ -29,8 +29,8 @@ class UpdateModuleUseCase:
                 raise ModuleNotFoundError('Module not found.')
 
             await self.course_access_service.ensure_can_manage_module(
-                author=command.author,
-                module_id=module.course_id,
+                actor=command.actor,
+                module_id=module.id,
             )
 
             module.update(

@@ -8,7 +8,7 @@ from app.domain.entities.user import User
 
 @dataclass(slots=True)
 class CreateCourseCommand:
-    author: User
+    actor: User
     title: str
     description: str
 
@@ -21,7 +21,7 @@ class CreateCourseUseCase:
         async with self.uow:
             course = Course(
                 id=uuid4(),
-                author_id=command.author.id,
+                author_id=command.actor.id,
                 title=command.title,
                 description=command.description,
             )

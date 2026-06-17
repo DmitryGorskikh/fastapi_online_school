@@ -57,7 +57,7 @@ from app.presentation.api.dependencies import (
     get_create_lecture_use_case,
     get_create_module_use_case,
     get_create_section_use_case,
-    get_current_admin,
+    get_current_author_or_admin,
     get_update_course_use_case,
     get_update_lecture_use_case,
     get_update_module_use_case,
@@ -82,11 +82,11 @@ from app.presentation.api.schemas import (
     UpdateSectionRequest,
     ErrorResponse,
 )
+from app.domain.entities.user import User
 
 router = APIRouter(
     prefix='/admin',
     tags=['Admin'],
-    dependencies=[Depends(get_current_admin)],
     responses={
         401: {
             'description': 'Authentication credentials are missing '
@@ -121,11 +121,14 @@ logger = logging.getLogger('app.events')
 )
 async def create_course(
     request: CreateCourseRequest,
+    actor: User = Depends(get_current_author_or_admin),
     use_case: CreateCourseUseCase = Depends(get_create_course_use_case),
 ) -> CourseResponse:
     result = await use_case.execute(
         CreateCourseCommand(
-            title=request.title, description=request.description
+            actor=actor,
+            title=request.title,
+            description=request.description
         )
     )
     return CourseResponse.model_validate(result)
@@ -153,10 +156,12 @@ async def create_course(
 async def update_course(
     course_id: UUID,
     request: UpdateCourseRequest,
+    actor: User = Depends(get_current_author_or_admin),
     use_case: UpdateCourseUseCase = Depends(get_update_course_use_case),
 ) -> CourseResponse:
     result = await use_case.execute(
         UpdateCourseCommand(
+            actor=actor,
             course_id=course_id,
             title=request.title,
             description=request.description,
@@ -185,10 +190,11 @@ async def update_course(
 )
 async def remove_course(
     course_id: UUID,
+    actor: User = Depends(get_current_author_or_admin),
     use_case: DeleteCourseUseCase = Depends(get_remove_course_use_case),
 ):
     await use_case.execute(
-        DeleteCourseCommand(course_id=course_id)
+        DeleteCourseCommand(actor=actor, course_id=course_id)
     )
     logger.info(
         'Course deleted',
@@ -219,10 +225,12 @@ async def remove_course(
 async def create_module(
     course_id: UUID,
     request: CreateModuleRequest,
+    actor: User = Depends(get_current_author_or_admin),
     use_case: CreateModuleUseCase = Depends(get_create_module_use_case),
 ) -> ModuleResponse:
     result = await use_case.execute(
         CreateModuleCommand(
+            actor=actor,
             course_id=course_id,
             title=request.title,
             description=request.description,
@@ -254,10 +262,12 @@ async def create_module(
 async def update_module(
     module_id: UUID,
     request: UpdateModuleRequest,
+    actor: User = Depends(get_current_author_or_admin),
     use_case: UpdateModuleUseCase = Depends(get_update_module_use_case),
 ) -> ModuleResponse:
     result = await use_case.execute(
         UpdateModuleCommand(
+            actor=actor,
             module_id=module_id,
             title=request.title,
             description=request.description,
@@ -287,10 +297,11 @@ async def update_module(
 )
 async def remove_module(
     module_id: UUID,
+    actor: User = Depends(get_current_author_or_admin),
     use_case: DeleteModuleUseCase = Depends(get_remove_module_use_case),
 ):
     await use_case.execute(
-        DeleteModuleCommand(module_id=module_id)
+        DeleteModuleCommand(actor=actor, module_id=module_id)
     )
     logger.info(
         'Module deleted',
@@ -321,10 +332,12 @@ async def remove_module(
 async def create_section(
     module_id: UUID,
     request: CreateSectionRequest,
+    actor: User = Depends(get_current_author_or_admin),
     use_case: CreateSectionUseCase = Depends(get_create_section_use_case),
 ) -> SectionResponse:
     result = await use_case.execute(
         CreateSectionCommand(
+            actor=actor,
             module_id=module_id,
             title=request.title,
             description=request.description,
@@ -356,10 +369,12 @@ async def create_section(
 async def update_section(
     section_id: UUID,
     request: UpdateSectionRequest,
+    actor: User = Depends(get_current_author_or_admin),
     use_case: UpdateSectionUseCase = Depends(get_update_section_use_case),
 ) -> SectionResponse:
     result = await use_case.execute(
         UpdateSectionCommand(
+            actor=actor,
             section_id=section_id,
             title=request.title,
             description=request.description,
@@ -389,10 +404,11 @@ async def update_section(
 )
 async def remove_section(
     section_id: UUID,
+    actor: User = Depends(get_current_author_or_admin),
     use_case: DeleteSectionUseCase = Depends(get_remove_section_use_case),
 ):
     await use_case.execute(
-        DeleteSectionCommand(section_id=section_id)
+        DeleteSectionCommand(actor=actor, section_id=section_id)
     )
     logger.info(
         'Section deleted',
@@ -423,10 +439,12 @@ async def remove_section(
 async def create_lecture(
     section_id: UUID,
     request: CreateLectureRequest,
+    actor: User = Depends(get_current_author_or_admin),
     use_case: CreateLectureUseCase = Depends(get_create_lecture_use_case),
 ) -> LectureResponse:
     result = await use_case.execute(
         CreateLectureCommand(
+            actor=actor,
             section_id=section_id,
             title=request.title,
             content=request.content,
@@ -458,10 +476,12 @@ async def create_lecture(
 async def update_lecture(
     lecture_id: UUID,
     request: UpdateLectureRequest,
+    actor: User = Depends(get_current_author_or_admin),
     use_case: UpdateLectureUseCase = Depends(get_update_lecture_use_case),
 ) -> LectureResponse:
     result = await use_case.execute(
         UpdateLectureCommand(
+            actor=actor,
             lecture_id=lecture_id,
             title=request.title,
             content=request.content,
@@ -491,10 +511,11 @@ async def update_lecture(
 )
 async def remove_lecture(
     lecture_id: UUID,
+    actor: User = Depends(get_current_author_or_admin),
     use_case: DeleteLectureUseCase = Depends(get_remove_lecture_use_case),
 ):
     await use_case.execute(
-        DeleteLectureCommand(lecture_id=lecture_id)
+        DeleteLectureCommand(actor=actor, lecture_id=lecture_id)
     )
     logger.info(
         'Lecture deleted',

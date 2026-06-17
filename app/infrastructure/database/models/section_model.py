@@ -18,9 +18,15 @@ class SectionModel(Base):
     module: Mapped['ModuleModel'] = relationship(
         "ModuleModel", back_populates="sections"
     )
-    lectures: Mapped[list['LectureModel']]= relationship(
+    lectures: Mapped[list['LectureModel']] = relationship(
         "LectureModel",
         back_populates="section",
         cascade="all, delete-orphan",
         order_by="LectureModel.position",
+    )
+    questions: Mapped[list['QuestionModel']] = relationship(
+        'QuestionModel',
+        back_populates='section',
+        cascade='all, delete-orphan',
+        order_by='QuestionModel.position',
     )

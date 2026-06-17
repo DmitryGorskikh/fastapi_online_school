@@ -11,7 +11,7 @@ from app.domain.entities import User
 
 @dataclass(slots=True)
 class DeleteModuleCommand:
-    author: User
+    actor: User
     module_id: UUID
 
 
@@ -29,8 +29,8 @@ class DeleteModuleUseCase:
                 raise ModuleNotFoundError("Module not found.")
 
             await self.course_access_service.ensure_can_manage_module(
-                author=command.author,
-                module_id=module.course_id,
+                actor=command.actor,
+                module_id=module.id,
             )
 
             course = await self.uow.courses.get_by_id(module.course_id)

@@ -59,7 +59,7 @@ async def test_login_returns_access_token(client, seeded_student_user):
         '/api/auth/login',
         json={
             'email': 'student@example.com',
-            'password': 'strongpassword123',
+            'password': 'Strongpassword123',
         },
     )
 

@@ -9,6 +9,7 @@ from app.application.interfaces.repositories import (
     AnswerOptionRepository,
     QuestionAttemptRepository,
     UserRepository,
+    ProgressRepository
 )
 
 
@@ -20,6 +21,7 @@ class UnitOfWork(ABC):
     questions: QuestionRepository
     answer_options: AnswerOptionRepository
     question_attempts: QuestionAttemptRepository
+    progress: ProgressRepository
     users: UserRepository
 
     @abstractmethod

@@ -13,7 +13,7 @@ class ModuleMapper:
             title=model.title,
             description=model.description,
             position=model.position,
-            section_ids=[UUID(section.id) for section in sorted(model.sections, key=lambda x: x.position)],
+            section_ids=[UUID(section.id) for section in sorted(model.sections, key=lambda x: x.position)],  # noqa: E501
         )
 
     @staticmethod

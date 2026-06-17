@@ -10,7 +10,7 @@ from app.domain.entities.lecture import Lecture
 
 @dataclass(slots=True)
 class CreateLectureCommand:
-    author: User
+    actor: User
     section_id: UUID
     title: str
     content: str
@@ -29,7 +29,7 @@ class CreateLectureUseCase:
                 raise SectionNotFoundError('Section not found.')
 
             await self.course_access_service.ensure_can_manage_section(
-                author=command.author,
+                actor=command.actor,
                 section_id=section.id,
             )
 

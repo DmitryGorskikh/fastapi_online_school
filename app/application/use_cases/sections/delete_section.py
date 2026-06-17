@@ -11,7 +11,7 @@ from app.domain.entities import User
 
 @dataclass(slots=True)
 class DeleteSectionCommand:
-    author: User
+    actor: User
     section_id: UUID
 
 
@@ -29,7 +29,7 @@ class DeleteSectionUseCase:
                 raise SectionNotFoundError("Section not found.")
 
             await self.course_access_service.ensure_can_manage_section(
-                author=command.author,
+                actor=command.actor,
                 section_id=section.id,
             )
 

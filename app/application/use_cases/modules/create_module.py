@@ -10,7 +10,7 @@ from app.domain.entities.module import Module
 
 @dataclass(slots=True)
 class CreateModuleCommand:
-    author: User
+    actor: User
     course_id: UUID
     title: str
     description: str
@@ -29,7 +29,7 @@ class CreateModuleUseCase:
                 raise CourseNotFoundError("Course not found.")
 
             await self.course_access_service.ensure_can_manage_course(
-                author=command.author,
+                actor=command.actor,
                 course_id=course.id,
             )
 

@@ -19,7 +19,10 @@ class SqlAlchemySectionRepository(SectionRepository):
     async def get_by_id(self, section_id: UUID) -> Section | None:
         stmt = (
             select(SectionModel)
-            .options(selectinload(SectionModel.lectures))
+            .options(
+                selectinload(SectionModel.lectures),
+                selectinload(SectionModel.questions)
+            )
             .where(SectionModel.id == str(section_id))
         )
         result = await self.session.execute(stmt)
@@ -31,7 +34,10 @@ class SqlAlchemySectionRepository(SectionRepository):
             return []
         stmt = (
             select(SectionModel)
-            .options(selectinload(SectionModel.lectures))
+            .options(
+                selectinload(SectionModel.lectures),
+                selectinload(SectionModel.questions)
+            )
             .where(SectionModel.id.in_([str(item) for item in section_ids]))
         )
         result = await self.session.execute(stmt)

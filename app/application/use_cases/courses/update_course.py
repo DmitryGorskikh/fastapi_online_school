@@ -12,7 +12,7 @@ from app.domain.entities.user import User
 
 @dataclass(slots=True)
 class UpdateCourseCommand:
-    author: User
+    actor: User
     course_id: UUID
     title: str
     description: str
@@ -31,7 +31,7 @@ class UpdateCourseUseCase:
                 raise CourseNotFoundError("Course not found.")
 
             await self.course_access_service.ensure_can_manage_course(
-                author=command.author,
+                actor=command.actor,
                 course_id=course.id,
             )
 

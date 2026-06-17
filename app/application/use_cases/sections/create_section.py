@@ -10,7 +10,7 @@ from app.domain.entities.section import Section
 
 @dataclass(slots=True)
 class CreateSectionCommand:
-    author: User
+    actor: User
     module_id: UUID
     title: str
     description: str
@@ -29,7 +29,7 @@ class CreateSectionUseCase:
                 raise ModuleNotFoundError('Module not found.')
 
             await self.course_access_service.ensure_can_manage_module(
-                author=command.author,
+                actor=command.actor,
                 module_id=module.id,
             )
 

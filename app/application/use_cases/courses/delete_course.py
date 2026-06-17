@@ -11,7 +11,7 @@ from app.domain.entities import User
 
 @dataclass(slots=True)
 class DeleteCourseCommand:
-    author: User
+    actor: User
     course_id: UUID
 
 
@@ -29,7 +29,7 @@ class DeleteCourseUseCase:
                 raise CourseNotFoundError("Course not found.")
 
             await self.course_access_service.ensure_can_manage_course(
-                author=command.author,
+                actor=command.actor,
                 course_id=course.id,
             )
 

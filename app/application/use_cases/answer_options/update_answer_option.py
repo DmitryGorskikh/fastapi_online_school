@@ -12,7 +12,7 @@ from app.domain.entities.user import User
 
 @dataclass(slots=True)
 class UpdateAnswerOptionCommand:
-    author: User
+    actor: User
     answer_option_id: UUID
     text: str
     position: int
@@ -41,7 +41,7 @@ class UpdateAnswerOptionUseCase:
             )
 
             await self.course_access_service.ensure_can_manage_section(
-                author=command.author,
+                actor=command.actor,
                 section_id=question.section_id,
             )
 

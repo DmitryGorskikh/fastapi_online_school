@@ -9,7 +9,7 @@ from app.application.services.course_access_service import CourseAccessService
 
 @dataclass(slots=True)
 class CreateQuestionCommand:
-    author: User
+    actor: User
     section_id: UUID
     text: str
     position: int
@@ -28,7 +28,7 @@ class CreateQuestionUseCase:
         async with self.uow:
             section = await (
                 self.course_access_service.ensure_can_manage_section(
-                    author=command.author, section_id=command.section_id
+                    actor=command.actor, section_id=command.section_id
                 )
             )
 

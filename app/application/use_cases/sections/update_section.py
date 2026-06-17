@@ -10,7 +10,7 @@ from app.domain.entities.section import Section
 
 @dataclass(slots=True)
 class UpdateSectionCommand:
-    author: User
+    actor: User
     section_id: UUID
     title: str
     description: str
@@ -29,7 +29,7 @@ class UpdateSectionUseCase:
                 raise SectionNotFoundError('Section not found.')
 
             await self.course_access_service.ensure_can_manage_section(
-                author=command.author,
+                actor=command.actor,
                 section_id=section.id,
             )
 

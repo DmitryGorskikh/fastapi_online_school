@@ -15,7 +15,8 @@ class JsonFormatter(logging.Formatter):
         }
         for key in (
             'method', 'path', 'status_code', 'duration_ms', 'event', 'user_id',
-            'email', 'course_id', 'module_id', 'section_id', 'lecture_id',
+            'email', 'actor_id', 'course_id', 'module_id', 'section_id',
+            'lecture_id', 'question_id', 'answer_option_id',
         ):
             if hasattr(record, key):
                 log[key] = getattr(record, key)

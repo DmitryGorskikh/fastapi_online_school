@@ -7,7 +7,7 @@ async def test_mvp_flow_from_login_to_public_read(client, seeded_admin_user):
         '/api/auth/login',
         json={
             'email': 'admin@example.com',
-            'password': 'strongpassword123',
+            'password': 'Strongpassword123',
         },
     )
     assert login_response.status_code == 200

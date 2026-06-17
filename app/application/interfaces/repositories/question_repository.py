@@ -22,5 +22,5 @@ class QuestionRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def remove(self, question_id: UUID) -> None:
+    async def remove(self, question: Question) -> None:
         raise NotImplementedError

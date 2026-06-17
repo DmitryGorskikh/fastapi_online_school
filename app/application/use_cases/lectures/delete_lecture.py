@@ -11,7 +11,7 @@ from app.domain.entities import User
 
 @dataclass(slots=True)
 class DeleteLectureCommand:
-    author: User
+    actor: User
     lecture_id: UUID
 
 
@@ -27,7 +27,7 @@ class DeleteLectureUseCase:
                 raise LectureNotFoundError("Lecture not found.")
 
             await self.course_access_service.ensure_can_manage_section(
-                author=command.author,
+                actor=command.actor,
                 section_id=lecture.section_id,
             )
 

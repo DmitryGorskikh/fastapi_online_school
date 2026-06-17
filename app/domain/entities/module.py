@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from typing import Collection
 from uuid import UUID
 
 from app.domain.exceptions import InvalidModuleError
@@ -37,3 +38,11 @@ class Module:
     def remove_section(self, section_id: UUID) -> None:
         if section_id in self.section_ids:
             self.section_ids.remove(section_id)
+
+    def can_be_completed(self) -> bool:
+        return bool(self.section_ids)
+
+    def is_completed_by(self, completed_section_ids: Collection[UUID]) -> bool:
+        if not self.can_be_completed():
+            return False
+        return all(section_id in completed_section_ids for section_id in self.section_ids)  # noqa: E501
