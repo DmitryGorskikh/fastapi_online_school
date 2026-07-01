@@ -102,6 +102,15 @@ class Settings(BaseSettings):
         },
     ]
 
+    redis_url: str = Field(
+        default='redis://localhost:6379/0',
+        validation_alias='REDIS_URL',
+    )
+    submission_queue_name: str = Field(
+        default='code-submissions',
+        validation_alias='SUBMISSION_QUEUE_NAME',
+    )
+
     @property
     def api(self) -> ApiSettings:
         return ApiSettings(

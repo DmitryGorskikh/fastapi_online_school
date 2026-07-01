@@ -19,11 +19,26 @@ from app.application.interfaces.repositories.question_repository import (
 from app.application.interfaces.repositories.answer_option_repository import (
     AnswerOptionRepository
 )
-from app.application.interfaces.repositories.question_attempt_repository import (
+from app.application.interfaces.repositories.question_attempt_repository import (  # noqa 501
     QuestionAttemptRepository
 )
 from app.application.interfaces.repositories.progress_repository import (
     ProgressRepository
+)
+from app.application.interfaces.repositories.task_repository import (
+    TaskRepository
+)
+from app.application.interfaces.repositories.task_attempt_repository import (
+    TaskAttemptRepository
+)
+from app.application.interfaces.repositories.code_task_repository import (
+    CodeTaskRepository
+)
+from app.application.interfaces.repositories.test_case_repository import (
+    TestCaseRepository
+)
+from app.application.interfaces.repositories.code_submission_repository import (  # Noqa E501
+    CodeSubmissionRepository,
 )
 
 __all__ = [
@@ -35,5 +50,10 @@ __all__ = [
     'AnswerOptionRepository',
     'QuestionAttemptRepository',
     'UserRepository',
-    'ProgressRepository'
+    'ProgressRepository',
+    'TaskRepository',
+    'TaskAttemptRepository',
+    'CodeTaskRepository',
+    'TestCaseRepository',
+    'CodeSubmissionRepository',
 ]

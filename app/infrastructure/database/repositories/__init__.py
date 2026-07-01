@@ -22,9 +22,23 @@ from app.infrastructure.database.repositories.question_repository import (
 from app.infrastructure.database.repositories.section_repository import (
     SqlAlchemySectionRepository,
 )
+from app.infrastructure.database.repositories.task_attempt_repository import \
+    SqlAlchemyTaskAttemptRepository
+from app.infrastructure.database.repositories.task_repository import (
+    SqlAlchemyTaskRepository
+)
 
 from app.infrastructure.database.repositories.user_repository import (
     SqlAlchemyUserRepository,
+)
+from app.infrastructure.database.repositories.code_submission_repository import (  # Noqa E501
+    SqlAlchemyCodeSubmissionRepository,
+)
+from app.infrastructure.database.repositories.code_task_repository import (
+    SqlAlchemyCodeTaskRepository,
+)
+from app.infrastructure.database.repositories.test_case_repository import (
+    SqlAlchemyTestCaseRepository,
 )
 
 __all__ = [
@@ -36,5 +50,10 @@ __all__ = [
     "SqlAlchemyQuestionRepository",
     "SqlAlchemyAnswerOptionRepository",
     "SqlAlchemyQuestionAttemptRepository",
-    "SqlAlchemyProgressRepository"
+    "SqlAlchemyTaskRepository",
+    "SqlAlchemyTaskAttemptRepository",
+    "SqlAlchemyProgressRepository",
+    'SqlAlchemyCodeTaskRepository',
+    'SqlAlchemyTestCaseRepository',
+    'SqlAlchemyCodeSubmissionRepository',
 ]

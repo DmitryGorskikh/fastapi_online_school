@@ -3,6 +3,7 @@ from uuid import UUID
 
 from app.domain.entities import QuestionAttempt, Section, Module
 from app.domain.exceptions import InvalidProgressError
+from app.domain.entities.task_attempt import TaskAttempt
 
 
 @dataclass(slots=True)
@@ -13,6 +14,8 @@ class Progress:
     completed_question_ids: list[UUID] = field(default_factory=list)
     completed_section_ids: list[UUID] = field(default_factory=list)
     completed_module_ids: list[UUID] = field(default_factory=list)
+    completed_task_ids: list[UUID] = field(default_factory=list)
+    completed_code_task_ids: list[UUID] = field(default_factory=list)
     total_points: int = 0
 
     def __post_init__(self) -> None:
@@ -24,6 +27,10 @@ class Progress:
         ):
             raise InvalidProgressError(
                 'Progress cannot contain duplicate completed questions.'
+            )
+        if len(self.completed_task_ids) != len(set(self.completed_task_ids)):
+            raise InvalidProgressError(
+                'Progress cannot contain duplicate completed tasks.'
             )
         if len(self.completed_section_ids) != len(
             set(self.completed_section_ids)
@@ -41,6 +48,18 @@ class Progress:
             raise InvalidProgressError(
                 'Progress total points cannot be negative.'
             )
+        if len(self.completed_code_task_ids) != len(
+            set(self.completed_code_task_ids)
+        ):
+            raise InvalidProgressError(
+                'Progress cannot contain duplicate completed code tasks.'
+            )
+
+    def has_completed_code_task(self, code_task_id: UUID) -> bool:
+        return code_task_id in self.completed_code_task_ids
+
+    def has_completed_task(self, task_id: UUID) -> bool:
+        return task_id in self.completed_task_ids
 
     def has_completed_question(self, question_id: UUID) -> bool:
         return question_id in self.completed_question_ids
@@ -50,6 +69,14 @@ class Progress:
 
     def has_completed_module(self, module_id: UUID) -> bool:
         return module_id in self.completed_module_ids
+
+    def mark_code_task_completed(self, code_task_id: UUID) -> None:
+        if code_task_id not in self.completed_code_task_ids:
+            self.completed_code_task_ids.append(code_task_id)
+
+    def mark_task_completed(self, task_id: UUID) -> None:
+        if task_id not in self.completed_task_ids:
+            self.completed_task_ids.append(task_id)
 
     def mark_question_completed(self, question_id: UUID) -> None:
         if question_id not in self.completed_question_ids:
@@ -76,8 +103,28 @@ class Progress:
         self.add_points(attempt.awarded_points)
         return True
 
+    def apply_correct_task_attempt(self, attempt: TaskAttempt) -> bool:
+        if attempt.student_id != self.student_id:
+            raise InvalidProgressError(
+                'Task attempt does not belong to this student.'
+            )
+        if not attempt.is_correct():
+            return False
+
+        already_completed = self.has_completed_task(attempt.task_id)
+        if already_completed:
+            return False
+
+        self.mark_task_completed(attempt.task_id)
+        self.add_points(attempt.awarded_points)
+        return True
+
     def sync_section_completion(self, section: Section) -> bool:
-        if not section.is_completed_by(self.completed_question_ids):
+        if not section.is_completed_by(
+            completed_question_ids=self.completed_question_ids,
+            completed_task_ids=self.completed_task_ids,
+            completed_code_task_ids=self.completed_code_task_ids,
+        ):
             return False
         already_completed = self.has_completed_section(section.id)
         self.mark_section_completed(section.id)
@@ -89,6 +136,16 @@ class Progress:
         already_completed = self.has_completed_module(module.id)
         self.mark_module_completed(module.id)
         return not already_completed
+
+    def complete_code_task(
+        self, code_task_id: UUID, reward_points: int
+    ) -> bool:
+        if self.has_completed_code_task(code_task_id):
+            return False
+
+        self.mark_code_task_completed(code_task_id)
+        self.add_points(reward_points)
+        return True
 
     def completed_sections_count(self) -> int:
         return len(self.completed_section_ids)
@@ -119,6 +176,7 @@ class Progress:
     def is_empty(self) -> bool:
         return (
             not self.completed_question_ids
+            and not self.completed_code_task_ids
             and not self.completed_section_ids
             and not self.completed_module_ids
             and self.total_points == 0

@@ -9,7 +9,12 @@ from app.application.interfaces.repositories import (
     AnswerOptionRepository,
     QuestionAttemptRepository,
     UserRepository,
-    ProgressRepository
+    ProgressRepository,
+    TaskAttemptRepository,
+    TaskRepository,
+    CodeTaskRepository,
+    TestCaseRepository,
+    CodeSubmissionRepository
 )
 
 
@@ -22,6 +27,11 @@ class UnitOfWork(ABC):
     answer_options: AnswerOptionRepository
     question_attempts: QuestionAttemptRepository
     progress: ProgressRepository
+    tasks: TaskRepository
+    task_attempts: TaskAttemptRepository
+    code_tasks: CodeTaskRepository
+    test_cases: TestCaseRepository
+    code_submissions: CodeSubmissionRepository
     users: UserRepository
 
     @abstractmethod
